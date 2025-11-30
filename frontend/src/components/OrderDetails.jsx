@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../context/AppContext.jsx";
 import { getOrderById } from "../api/api.js";
 import { useParams } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 const OrderDetails = () => {
   const { id } = useParams();
+  const { loading } = useContext(AppContext);
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
@@ -14,7 +17,7 @@ const OrderDetails = () => {
     fetchOrder();
   }, [id]);
 
-  if (!order) return <p>Loading...</p>;
+  if (loading || !order) return <CircularProgress />;
 
   return (
     <div>

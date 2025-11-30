@@ -1,52 +1,54 @@
 package com.example.DistributedOrderTracking.controller;
 
-import com.example.DistributedOrderTracking.dto.*;
 import com.example.DistributedOrderTracking.model.Order;
+import com.example.DistributedOrderTracking.model.OrderStatus;
+import com.example.DistributedOrderTracking.Repository.OrderRepository;
 import com.example.DistributedOrderTracking.service.OrderService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
     @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
     private OrderService orderService;
 
-    // Create an order
-    @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
-        Order order = orderService.createOrder(request);
-        return ResponseEntity.ok(OrderResponse.fromOrder(order));
-    }
-
-    // Get all orders
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        List<OrderResponse> responses = orders.stream()
-                .map(OrderResponse::fromOrder)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responses);
+    public List<Order> getOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        return orderService.getAllOrders(page, size, sortBy);
     }
 
-    // Get single order
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id) {
-        Order order = orderService.getOrderById(id);
-        return ResponseEntity.ok(OrderResponse.fromOrder(order));
+    public Order getOrderById(@PathVariable Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
-    // Update order status
+    @PostMapping
+    public Order createOrder(@RequestBody Order order) {
+        return orderService.createOrder(order);
+    }
+
     @PutMapping("/{id}/status")
-    public ResponseEntity<OrderResponse> updateStatus(@PathVariable Long id,
-                                                      @Valid @RequestBody OrderStatusUpdateRequest request) {
-        Order order = orderService.updateOrderStatus(id, request.getStatus());
-        return ResponseEntity.ok(OrderResponse.fromOrder(order));
+    public Order updateOrderStatus(@PathVariable Long id, @RequestBody OrderStatus status) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(status);
+        return orderRepository.save(order);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteOrder(@PathVariable Long id) {
+        orderRepository.deleteById(id);
+        return "Order deleted successfully";
     }
 }

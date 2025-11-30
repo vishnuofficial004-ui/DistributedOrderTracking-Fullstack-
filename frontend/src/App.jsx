@@ -7,7 +7,7 @@ import OrderDetails from "./components/OrderDetails.jsx";
 const App = () => {
   return (
     <Router>
-      <nav>
+      <nav style={{ marginBottom: "20px" }}>
         <Link to="/">Orders</Link> | <Link to="/create">Create Order</Link>
       </nav>
       <Routes>

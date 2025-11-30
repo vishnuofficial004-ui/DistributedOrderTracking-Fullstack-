@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { getOrders } from "../api/api.js";
+import React, { useContext } from "react";
+import { AppContext } from "../context/AppContext.jsx";
 import { Link } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 const OrdersList = () => {
-  const [orders, setOrders] = useState([]);
+  const { orders, loading } = useContext(AppContext);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const res = await getOrders();
-      setOrders(res.data);
-    };
-    fetchOrders();
-  }, []);
+  if (loading) return <CircularProgress />;
 
   return (
     <div>
@@ -29,3 +24,4 @@ const OrdersList = () => {
 };
 
 export default OrdersList;
+

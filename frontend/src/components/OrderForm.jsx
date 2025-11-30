@@ -1,27 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { createOrder, getUsers, getProducts } from "../api/api.js";
+import React, { useContext, useState } from "react";
+import { AppContext } from "../context/AppContext.jsx";
+import { createOrder } from "../api/api.js";
+import { CircularProgress, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const OrderForm = () => {
-  const [users, setUsers] = useState([]);
-  const [products, setProducts] = useState([]);
+  const { users, products, fetchAllData, loading } = useContext(AppContext);
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [message, setMessage] = useState("");
-
-  // Fetch users and products on mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usersRes = await getUsers();
-        const productsRes = await getProducts();
-        setUsers(usersRes.data);
-        setProducts(productsRes.data);
-      } catch (err) {
-        console.error("Error fetching users/products", err);
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,52 +16,48 @@ const OrderForm = () => {
       return;
     }
     try {
-      const res = await createOrder({
+      await createOrder({
         userId: selectedUser,
         productIds: selectedProducts.map(Number),
       });
-      setMessage(`Order created successfully! ID: ${res.data.id}`);
+      setMessage("Order created successfully!");
       setSelectedUser("");
       setSelectedProducts([]);
+      fetchAllData(); // Refresh global state
     } catch (err) {
       setMessage(err.response?.data?.error || "Error creating order");
     }
   };
 
+  if (loading) return <CircularProgress />;
+
   return (
     <div>
       <h2>Create Order</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>User: </label>
-          <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
-            <option value="">Select User</option>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", width: "300px" }}>
+        <FormControl fullWidth>
+          <InputLabel>User</InputLabel>
+          <Select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
             {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.name}
-              </option>
+              <MenuItem key={u.id} value={u.id}>{u.name}</MenuItem>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FormControl>
 
-        <div>
-          <label>Products: </label>
-          <select
+        <FormControl fullWidth>
+          <InputLabel>Products</InputLabel>
+          <Select
             multiple
             value={selectedProducts}
-            onChange={(e) =>
-              setSelectedProducts([...e.target.selectedOptions].map((o) => o.value))
-            }
+            onChange={(e) => setSelectedProducts([...e.target.selectedOptions].map((o) => o.value))}
           >
             {products.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name} - {p.price}
-              </option>
+              <MenuItem key={p.id} value={p.id}>{p.name} - {p.price}</MenuItem>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FormControl>
 
-        <button type="submit">Create Order</button>
+        <Button variant="contained" type="submit">Create Order</Button>
       </form>
       {message && <p>{message}</p>}
     </div>

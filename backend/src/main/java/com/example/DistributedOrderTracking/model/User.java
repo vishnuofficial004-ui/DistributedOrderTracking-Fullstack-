@@ -6,20 +6,25 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String email;
 
+    private String role;  // <-- Added role field
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
 
     public User() {}
-    public User(Long id, String name, String email, List<Order> orders) {
+
+    public User(Long id, String name, String email, String role, List<Order> orders) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.role = role;
         this.orders = orders;
     }
 
@@ -31,6 +36,9 @@ public class User {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getRole() { return role; }     // <-- Getter
+    public void setRole(String role) { this.role = role; }  // <-- Setter
 
     public List<Order> getOrders() { return orders; }
     public void setOrders(List<Order> orders) { this.orders = orders; }

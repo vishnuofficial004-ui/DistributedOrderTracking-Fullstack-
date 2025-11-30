@@ -7,7 +7,9 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Order {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -29,6 +31,7 @@ public class Order {
     private OrderStatus orderStatus;
 
     public Order() {}
+
     public Order(Long id, User user, Double totalPrice, LocalDateTime orderDate,
                  List<Product> products, OrderStatus orderStatus) {
         this.id = id;
@@ -56,4 +59,18 @@ public class Order {
 
     public OrderStatus getOrderStatus() { return orderStatus; }
     public void setOrderStatus(OrderStatus orderStatus) { this.orderStatus = orderStatus; }
+
+    // Helper methods to match controller usage
+    public String getStatus() {
+        return orderStatus != null ? orderStatus.getStatus() : null;
+    }
+
+    public void setStatus(OrderStatus status) {
+        if (this.orderStatus == null) {
+            this.orderStatus = status;
+            status.setOrder(this); // maintain bidirectional link
+        } else {
+            this.orderStatus.setStatus(status.getStatus());
+        }
+    }
 }

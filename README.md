@@ -31,31 +31,46 @@ Tools:
 - Postman
 - MySQL Workbench
 - Git
-- Docker (optional)
 
 ## Folder Structure
+<pre>
 DistributedOrderTracking/
-├── backend/
-│   ├── src/main/java/com/example/DistributedOrderTracking/
-│   │   ├── controller/
-│   │   ├── service/
-│   │   ├── repository/
-│   │   ├── model/
-│   │   └── config/
-│   ├── src/main/resources/
-│   ├── pom.xml
-│   └── application.properties
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-└── README.md
+|
+|-- backend/
+|   |-- src/
+|   |   |-- main/
+|   |   |   |-- java/
+|   |   |   |   |-- com/
+|   |   |   |   |   |-- example/
+|   |   |   |   |   |   |-- DistributedOrderTracking/
+|   |   |   |   |   |   |   |-- controller/
+|   |   |   |   |   |   |   |-- service/
+|   |   |   |   |   |   |   |-- repository/
+|   |   |   |   |   |   |   |-- model/
+|   |   |   |   |   |   |   |-- config/
+|   |   |   |
+|   |   |-- resources/
+|   |
+|   |-- pom.xml
+|   |-- application.properties
+|
+|-- frontend/
+|   |-- src/
+|   |   |-- components/
+|   |   |-- pages/
+|   |   |-- services/
+|   |   |-- App.jsx
+|   |   |-- main.jsx
+|   |
+|   |-- index.html
+|   |-- package.json
+|   |-- vite.config.js
+|
+|-- README.md
+</pre>
+
+
+
 
 ## Database Schema
 Tables:
@@ -109,9 +124,9 @@ cd backend
 mvn clean install  
 
 ### Configure application.properties
-spring.datasource.url=jdbc:mysql://localhost:3306/distributed_order_tracking  
-spring.datasource.username=root  
-spring.datasource.password=YOUR_PASSWORD  
+spring.datasource.url=jdbc:mysql://localhost:5030/distributed_order_tracking  
+spring.datasource.username=postgres  
+spring.datasource.password=2004
 spring.jpa.hibernate.ddl-auto=update  
 
 ### Run backend
